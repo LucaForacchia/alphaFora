@@ -1,4 +1,4 @@
-from src.pawn_move import PawnMove  # add more as implemented
+from src.chess_move import ChessMove  # add more as implemented
 from src.chessboard import ChessBoard
 
 # Orchestrates parsing and executing moves
@@ -6,25 +6,23 @@ from src.chessboard import ChessBoard
 class ChessGame:
     def __init__(self):
         self.board = ChessBoard()
-        self.move_classes = [PawnMove]  # extend with KnightMove, etc.
-
-    def parse_move(self, move_str):
-        for cls in self.move_classes:
-            mv = cls.parse(move_str, self.board)
-            if mv and mv.is_legal(self.board):
-                return mv
-        return None
 
     def play(self):
         self.show_board = True
         while True:
             if self.show_board:
                 self.board.display()
-            move_str = input("Enter move (or 'quit'): ").strip()
+            move_str = input("Enter move ('h' for help, 'quit' to exit): ").strip()
             if move_str.lower()=='quit': break
-            mv = self.parse_move(move_str)
-            if mv:
+            elif move_str.lower() in ['h', 'help', '-h', '--help']: 
+                print('Format your move as: starting_square-ending_square (for instance, b1-c3)')
+                self.show_board=False
+                continue
+            try:
+                mv = ChessMove.parse(move_str, self.board)
+                mv.is_legal(self.board)
                 self.board.apply_move(mv)
                 self.show_board = True
-            else:
-                print("Invalid or illegal move.")
+            except Exception as e:
+                print(f"Exception {type(e)}, {e}")
+                self.show_board = False

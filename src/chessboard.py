@@ -2,7 +2,6 @@ class ChessBoard:
     def __init__(self):
         self.board = self.create_starting_position()
         self.turn = 'w'
-        self.cols_map = {'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7}
 
     def create_starting_position(self):
         return [
@@ -17,10 +16,10 @@ class ChessBoard:
         ]
 
     def display(self):
-        print("  +------------------------+")
+        print("  +---------------------+")
         for i, row in enumerate(self.board):
             print(f"{8-i} | {' '.join(row)} |")
-        print("  +------------------------+")
+        print("  +---------------------+")
         print("    a b c d e f g h")
         print(f"\nTurn: {'White' if self.turn=='w' else 'Black'}\n")
 
@@ -30,6 +29,18 @@ class ChessBoard:
         self.board[move.from_row][move.from_col] = '.'
         self.turn = 'b' if self.turn=='w' else 'w'
 
+    def square_to_coords(self, sq):
+        cols_map = {'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7}
+
+        if len(sq)!=2 or sq[0] not in cols_map or sq[1] not in '12345678':
+            raise InvalidSquareException(sq)
+        
+        return 8-int(sq[1]), cols_map[sq[0]]
+
+
+class InvalidSquareException(ValueError):
+    def __init__(self):
+        super.__init__()
 
 # Test
 if __name__ == "__main__":
